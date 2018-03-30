@@ -11,12 +11,12 @@ class dbUtil():
 
 
     def get_driver_list_by_time(self,start_time,end_time):
-        excuteSQL = "select * from drivers where timestamp between ? and ?"
-        query_result = self.db_cursor.excute(excuteSQL,(start_time,end_time))
-        return [line[0] for line in query_result]
+        excuteSQL = "select * from drivers"
+        query_result = self.db_cursor.execute(excuteSQL)
+        return query_result.fetchall()
 
 
     def get_request_list_by_time(self,start_time,end_time):
-        excuteSQL = "select * from request where timestamp between ? and ?"
-        query_result = self.db_cursor.excute(excuteSQL,(start_time,end_time))
-        return [line[0] for line in query_result]
+        excuteSQL = "select * from request limit 500"
+        query_result = self.rs_db.execute(excuteSQL)
+        return query_result.fetchall()
