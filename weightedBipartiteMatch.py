@@ -18,7 +18,7 @@ class spfa():
         return self.minCostMaxFlow()
 
     def construct_graph(self):
-        nx_size = len(self.nx)
+        self.nx_size = len(self.nx)
 
         self.S = len(self.nx) + len(self.ny)
         self.T = self.S + 1
@@ -27,13 +27,13 @@ class spfa():
         for i, x in enumerate(self.nx):
             for j, y in enumerate(self.ny):
                 if self.edge[i][j]:
-                    self.add_edge(i, j + nx_size, self.weight[i][j])
+                    self.add_edge(i, j + self.nx_size, self.weight[i][j])
 
         for i, x in enumerate(self.nx):
             self.add_edge(self.S, i, 0)
 
         for j, y in enumerate(self.ny):
-            self.add_edge(j + nx_size, self.T, 0)
+            self.add_edge(j + self.nx_size, self.T, 0)
 
     def add_edge(self, x, y, weight):
         ex = {'v': y, 'weight': weight, 'rest_flow': 1}
@@ -74,3 +74,12 @@ class spfa():
                 p['rev']['rest_flow'] += 1
                 p = path[p['rev']['v']]
         return (max_flow, weight_sum)
+
+    def get_matching_detail(self):
+        matching = []
+        for i, x in enumerate(self.nx):
+            for edge in self.edge_list[i]:
+                y = edge['v']
+                if not y == self.S and edge['rest_flow'] == 0:
+                    matching.append((i, y - self.nx_size))
+        return matching
