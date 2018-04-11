@@ -1,9 +1,42 @@
 import random
+import json
+import urllib
+import urllib2
+
+# google API key : AIzaSyC33XFuyHVYjxtc19UYA7vls2PmgKnSBlo
+
 
 class listUtil():
     def __init__(self, driver_list, request_list):
         self.driver_list = driver_list
         self.request_list = request_list
+
+
+    def cal_distance_by_Google_API(self,driver_lat,driver_lon,request_lat,request_lon):
+        map_key = "AIzaSyC33XFuyHVYjxtc19UYA7vls2PmgKnSBlo"
+        distance_url = "https://maps.googleapis.com/maps/api/distancematrix/json?"
+
+        url = distance_url + '?' + urllib.urlencode({
+            'origins': "%s,%s" % (driver_lat, driver_lon),
+            'destinations': "%s,%s" % (request_lat,request_lon),
+            'key': map_key,
+        })
+
+        while True:
+            try:
+                # Get the API response.
+                response = str(urllib2.urlopen(url).read())
+            except IOError:
+                pass  # Fall through to the retry loop.
+            else:
+                # If we didn't get an IOError then parse the result.
+                result = json.loads(response.replace('\\n', ''))
+                if result['status'] == 'OK':
+                    return result['distance']
+                elif result['status'] != 'UNKNOWN_ERROR':
+                    # Many API errors cannot be fixed by a retry, e.g. INVALID_REQUEST or
+                    # ZERO_RESULTS. There is no point retrying these requests.
+                    raise Exception(result['error_message'])
 
     def gen_edge_list(self):
         list = {}
@@ -92,3 +125,4 @@ class listUtil():
         for n,request in enumerate(request_list):
             list[n] = value
         return list
+

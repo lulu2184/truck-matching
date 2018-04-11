@@ -10,9 +10,10 @@ class DataGen:
         self.rs_db.execute("drop table if exists request")
         self.rs_db.execute("create table driver_data (driver_id integer, timestamp integer, lat real, lon real,"
                           + " occupied integer)")
-        self.rs_db.execute("create table request (unit_budget real, start_time integer, end_time integer,"
+        # request data
+        self.rs_db.execute("create table request (unit_budget real, weight integer, start_time integer, end_time integer,"
                            "min_rating real, start_lat real, start_lon real, dst_lat real, dst_lon real)")
-        self.request_cols = ['unit_budget', 'start_time', 'end_time', 'min_rating', 'start_lat', 'start_lon',
+        self.request_cols = ['unit_budget', 'weight','start_time', 'end_time', 'min_rating', 'start_lat', 'start_lon',
                              'dst_lat', 'dst_lon']
 
     @staticmethod
@@ -25,6 +26,11 @@ class DataGen:
     def gen_unit_price():
         return max(1, np.random.normal(10, 0.3))
 
+
+    @staticmethod
+    def gen_weight():
+        return np.random.uniform(0,15);
+
     def has_driver(self, driver_id):
         query_result = self.db_cursor.execute("select * from drivers where driver_id = " + str(driver_id))
         for _ in query_result:
@@ -34,7 +40,8 @@ class DataGen:
     def insert_driver(self, driver_id):
         rating = self.gen_rating()
         unit_price = self.gen_unit_price()
-        self.db_cursor.execute("insert into drivers values (?,?,?)", (driver_id, rating, unit_price))
+        weight = self.gen_weight()
+        self.db_cursor.execute("insert into drivers values (?,?,?,?)", (driver_id, rating, unit_price,weight))
 
     def get_driver_list(self):
         query_result = self.db_cursor.execute("select * from drivers")
@@ -72,13 +79,14 @@ class DataGen:
             else:
                 if not pending_request:
                     pending_request = {'start_time': timestamp, 'min_rating': self.gen_rating(),
-                                       'start_lat': lat, 'start_lon': lon, 'unit_budget': self.gen_unit_price()}
+                                       'start_lat': lat, 'start_lon': lon,
+                                       'unit_budget': self.gen_unit_price(),'weight':self.gen_weight()}
 
     def load_data_to_db(self):
         db_cursor.execute('drop table if exists drivers')
         db_cursor.execute('drop table if exists data')
-
-        db_cursor.execute("CREATE TABLE drivers (driver_id integer, rating real, unit_price real)")
+        # driver table here
+        db_cursor.execute("CREATE TABLE drivers (driver_id integer, rating real, unit_price real, capacity integer)")
         db_cursor.execute("CREATE TABLE data (driver_id integer, timestamp integer, lat real, lon real,"
                           + " occupied integer)")
 
