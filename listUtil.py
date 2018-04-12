@@ -44,7 +44,7 @@ class listUtil():
                 if dri_lat == req_lat and dri_lon == req_lon :
                     list[request_id][driver_id] = 0
                 # price, rating, weight match and within acceptable distance
-                elif rating >= min_rating and unit_price <= unit_budget and req_weight <= capacity and dist <= 20:
+                elif rating >= min_rating and unit_price <= unit_budget and req_weight <= capacity and dist <= 10:
                     list[request_id][driver_id] = 1
                 else:
                     list[request_id][driver_id] = 0
@@ -66,7 +66,7 @@ class listUtil():
                 if dri_lat == req_lat and dri_lon == req_lon :
                     list[request_id][driver_id] = 0
                 # price, rating, weight match and within acceptable distance
-                elif rating >= min_rating and unit_price <= unit_budget and req_weight <= capacity and dist <= 20:
+                elif rating >= min_rating and unit_price <= unit_budget and req_weight <= capacity and dist <= 10:
                     list[request_id][driver_id] = 1
                     weight[request_id][driver_id] = self.calculate_weight(unit_price, rating, req_weight, capacity)
                 else:
@@ -80,7 +80,9 @@ class listUtil():
 
     def calculate_weight(self, price, rating,weight,capacity):
         return ((price - self.min_price) / (self.max_price - self.min_price) +
-                1 - (rating - self.min_rating) / (self.max_rating - self.min_rating))
+                1 - (rating - self.min_rating) / (self.max_rating - self.min_rating)) \
+               * self.car_type_match_factor_generator(weight,capacity)
+
 
     def firstComeFirstServe(self):
         count = 0
@@ -98,7 +100,7 @@ class listUtil():
             for ind, driver in enumerate(driver_list):
                 driver_id, rating, unit_price, capacity, dri_lat, dri_lon = self.parse_driver(driver)
                 dist = abs(self.haversine(dri_lon, dri_lat, req_lon, req_lat))
-                if rating >= min_rating and unit_price <= unit_budget and not visited[driver_id] and dist <= 20 \
+                if rating >= min_rating and unit_price <= unit_budget and not visited[driver_id] and dist <= 10 \
                         and req_weight <= capacity:
                     visited[driver_id] = True
                     count = count + 1
@@ -124,7 +126,7 @@ class listUtil():
             for ind, driver in enumerate(driver_list):
                 driver_id, rating, unit_price, capacity, dri_lat, dri_lon = self.parse_driver(driver)
                 dist = abs(self.haversine(dri_lon, dri_lat, req_lon, req_lat))
-                if rating >= min_rating and unit_price <= unit_budget and not visited[driver_id] and dist <= 20 \
+                if rating >= min_rating and unit_price <= unit_budget and not visited[driver_id] and dist <= 10 \
                         and req_weight <= capacity:
                     temp_list.append(driver_id)
                     temp_ind.append(ind)

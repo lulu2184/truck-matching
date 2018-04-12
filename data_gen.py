@@ -95,7 +95,7 @@ class DataGen:
         counter = 0
         id = 0
         for line in f:
-            if counter == 1000000:
+            if counter == 4000000:
                 print('finishing loading data...')
                 break
             counter += 1
