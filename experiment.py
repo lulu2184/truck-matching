@@ -131,7 +131,7 @@ def visualize(num_driver, num_request, random_result, fcfs_result, unweighted_re
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 
 def weighted_experiment():
-	driver_sizes = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000]
+	driver_sizes = [100, 200, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000]
 	request_sizes = [500] * 11
 
 	random_result = []

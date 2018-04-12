@@ -12,7 +12,7 @@ class DataGen:
                           + " occupied integer)")
         # request data
         self.rs_db.execute("create table request (unit_budget real, weight integer, start_time integer, end_time integer,"
-                           "min_rating real, start_lat real, start_lon real, dst_lat real, dst_lon real)")
+                           + "min_rating real, start_lat real, start_lon real, dst_lat real, dst_lon real)")
         self.request_cols = ['unit_budget', 'weight','start_time', 'end_time', 'min_rating', 'start_lat', 'start_lon',
                              'dst_lat', 'dst_lon']
 
@@ -29,7 +29,7 @@ class DataGen:
 
     @staticmethod
     def gen_weight():
-        return np.random.uniform(0,15);
+        return np.random.uniform(0,14);
 
     def has_driver(self, driver_id):
         query_result = self.db_cursor.execute("select * from drivers where driver_id = " + str(driver_id))
@@ -37,11 +37,11 @@ class DataGen:
             return True
         return False
 
-    def insert_driver(self, driver_id):
+    def insert_driver(self, driver_id,lat,lon):
         rating = self.gen_rating()
         unit_price = self.gen_unit_price()
         weight = self.gen_weight()
-        self.db_cursor.execute("insert into drivers values (?,?,?,?)", (driver_id, rating, unit_price,weight))
+        self.db_cursor.execute("insert into drivers values (?,?,?,?,?,?)", (driver_id, rating, unit_price, weight, lat, lon))
 
     def get_driver_list(self):
         query_result = self.db_cursor.execute("select * from drivers")
@@ -86,7 +86,8 @@ class DataGen:
         db_cursor.execute('drop table if exists drivers')
         db_cursor.execute('drop table if exists data')
         # driver table here
-        db_cursor.execute("CREATE TABLE drivers (driver_id integer, rating real, unit_price real, capacity integer)")
+        db_cursor.execute("CREATE TABLE drivers (driver_id integer, rating real, unit_price real, capacity integer," +
+                          "lat real, lon real)")
         db_cursor.execute("CREATE TABLE data (driver_id integer, timestamp integer, lat real, lon real,"
                           + " occupied integer)")
 
@@ -111,7 +112,7 @@ class DataGen:
             lon = float(lon)
             occupied = bool(int(occupied))
             if not self.has_driver(taxi_id):
-                self.insert_driver(taxi_id)
+                self.insert_driver(taxi_id,lat,lon)
 
             db_cursor.execute("INSERT INTO data VALUES (?,?,?,?,?)", (taxi_id, timestamp, lat, lon, occupied))
 
