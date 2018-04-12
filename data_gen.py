@@ -23,8 +23,12 @@ class DataGen:
         return float(rating)
 
     @staticmethod
-    def gen_unit_price():
-        return max(1, np.random.normal(10, 0.3))
+    def gen_unit_price(weight):
+        if weight < 5:
+            return max(1, np.random.normal(3, 0.2))
+        elif weight < 10:
+            return max(1, np.random.normal(8, 0.2))
+        return max(1, np.random.normal(13, 0.2))
 
 
     @staticmethod
@@ -39,8 +43,8 @@ class DataGen:
 
     def insert_driver(self, driver_id,lat,lon):
         rating = self.gen_rating()
-        unit_price = self.gen_unit_price()
         weight = self.gen_weight()
+        unit_price = self.gen_unit_price(weight)
         self.db_cursor.execute("insert into drivers values (?,?,?,?,?,?)", (driver_id, rating, unit_price, weight, lat, lon))
 
     def get_driver_list(self):
@@ -78,9 +82,12 @@ class DataGen:
 
             else:
                 if not pending_request:
-                    pending_request = {'start_time': timestamp, 'min_rating': self.gen_rating(),
+                    rating = self.gen_rating()
+                    weight = self.gen_weight()
+                    unit_price = self.gen_unit_price(weight)
+                    pending_request = {'start_time': timestamp, 'min_rating': rating,
                                        'start_lat': lat, 'start_lon': lon,
-                                       'unit_budget': self.gen_unit_price(),'weight':self.gen_weight()}
+                                       'unit_budget': unit_price,'weight':weight}
 
     def load_data_to_db(self):
         db_cursor.execute('drop table if exists drivers')

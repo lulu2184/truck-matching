@@ -13,6 +13,7 @@ class listUtil():
         self.max_price = max([float(driver[2]) for driver in self.driver_list])
         # x-axis is driver capacity, y-axis is request weight
         self.match_matrix = [[4,3,2],[1,4,3],[1,1,4]]
+        self.acceptable_dist = 30
 
     def haversine(self, lon1, lat1, lon2, lat2):
         """
@@ -44,7 +45,8 @@ class listUtil():
                 if dri_lat == req_lat and dri_lon == req_lon :
                     list[request_id][driver_id] = 0
                 # price, rating, weight match and within acceptable distance
-                elif rating >= min_rating and unit_price <= unit_budget and req_weight <= capacity and dist <= 10:
+                elif rating >= min_rating and unit_price <= unit_budget and req_weight <= capacity \
+                        and dist <= self.acceptable_dist:
                     list[request_id][driver_id] = 1
                 else:
                     list[request_id][driver_id] = 0
@@ -66,9 +68,10 @@ class listUtil():
                 if dri_lat == req_lat and dri_lon == req_lon :
                     list[request_id][driver_id] = 0
                 # price, rating, weight match and within acceptable distance
-                elif rating >= min_rating and unit_price <= unit_budget and req_weight <= capacity and dist <= 10:
+                elif rating >= min_rating and unit_price <= unit_budget and req_weight <= capacity \
+                        and dist <= self.acceptable_dist:
                     list[request_id][driver_id] = 1
-                    weight[request_id][driver_id] = self.calculate_weight(unit_price, rating, req_weight, capacity)
+                    weight[request_id][driver_id] = self.calculate_weight(unit_price, rating, req_weight, capacity, dist)
                 else:
                     list[request_id][driver_id] = 0
         return list, weight
@@ -78,10 +81,10 @@ class listUtil():
         dri_type = int(capacity / 5.0)
         return self.match_matrix[req_type][dri_type]
 
-    def calculate_weight(self, price, rating,weight,capacity):
-        return ((price - self.min_price) / (self.max_price - self.min_price) +
+    def calculate_weight(self, price, rating,weight,capacity, dist):
+        return abs((price - self.min_price) / (self.max_price - self.min_price) +
                 1 - (rating - self.min_rating) / (self.max_rating - self.min_rating)) \
-               * self.car_type_match_factor_generator(weight,capacity)
+                * self.car_type_match_factor_generator(weight,capacity) * (1 / dist)
 
 
     def firstComeFirstServe(self):
@@ -100,8 +103,8 @@ class listUtil():
             for ind, driver in enumerate(driver_list):
                 driver_id, rating, unit_price, capacity, dri_lat, dri_lon = self.parse_driver(driver)
                 dist = abs(self.haversine(dri_lon, dri_lat, req_lon, req_lat))
-                if rating >= min_rating and unit_price <= unit_budget and not visited[driver_id] and dist <= 10 \
-                        and req_weight <= capacity:
+                if rating >= min_rating and unit_price <= unit_budget and not visited[driver_id] \
+                        and dist <= self.acceptable_dist and req_weight <= capacity:
                     visited[driver_id] = True
                     count = count + 1
                     self.fcfs_matching.append((request_id, ind))
@@ -126,8 +129,8 @@ class listUtil():
             for ind, driver in enumerate(driver_list):
                 driver_id, rating, unit_price, capacity, dri_lat, dri_lon = self.parse_driver(driver)
                 dist = abs(self.haversine(dri_lon, dri_lat, req_lon, req_lat))
-                if rating >= min_rating and unit_price <= unit_budget and not visited[driver_id] and dist <= 10 \
-                        and req_weight <= capacity:
+                if rating >= min_rating and unit_price <= unit_budget and not visited[driver_id] \
+                        and dist <= self.acceptable_dist and req_weight <= capacity:
                     temp_list.append(driver_id)
                     temp_ind.append(ind)
             if len(temp_list) >= 1:
