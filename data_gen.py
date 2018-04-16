@@ -24,16 +24,16 @@ class DataGen:
 
     @staticmethod
     def gen_unit_price(weight):
-        if weight < 5:
-            return max(1, np.random.normal(3, 0.2))
-        elif weight < 10:
-            return max(1, np.random.normal(8, 0.2))
-        return max(1, np.random.normal(13, 0.2))
+        if weight < 10:
+            return np.random.uniform(0,9)
+        elif weight < 20:
+            return np.random.uniform(10,19)
+        return np.random.uniform(20,29)
 
 
     @staticmethod
     def gen_weight():
-        return np.random.uniform(0,14);
+        return np.random.uniform(0,29)
 
     def has_driver(self, driver_id):
         query_result = self.db_cursor.execute("select * from drivers where driver_id = " + str(driver_id))

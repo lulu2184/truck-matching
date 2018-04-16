@@ -53,14 +53,14 @@ class weightedExperiment():
 	# Run random matching and display criteria
 	def run_random_matching(self):
 		match_num = self.list_util.random_match()
-		avg_price, avg_rating = self.list_util.avg_price_rating_for_matching(self.list_util.random_matching)
-		return match_num, avg_price, avg_rating
+		avg_price, avg_rating, avg_distance, utilization = self.list_util.statistic_for_matching(self.list_util.random_matching)
+		return match_num, avg_price, avg_rating, avg_distance, utilization
 
 	# Run FCFS matching and display criteria
 	def run_FCFS_matching(self):
 		match_num = self.list_util.firstComeFirstServe()
-		avg_price, avg_rating = self.list_util.avg_price_rating_for_matching(self.list_util.fcfs_matching)
-		return match_num, avg_price, avg_rating
+		avg_price, avg_rating, avg_distance, utilization = self.list_util.statistic_for_matching(self.list_util.fcfs_matching)
+		return match_num, avg_price, avg_rating, avg_distance, utilization
 
 	# Run unweighted bipartite matching
 	def run_unweighted_matching(self):
@@ -78,8 +78,8 @@ class weightedExperiment():
 
 		match_num = unweightedMatching.max_match()
 		matching = unweightedMatching.get_matching()
-		avg_price, avg_rating = self.list_util.avg_price_rating_for_matching(matching)
-		return match_num, avg_price, avg_rating
+		avg_price, avg_rating, avg_distance, utilization = self.list_util.statistic_for_matching(matching)
+		return match_num, avg_price, avg_rating, avg_distance, utilization
 
 	# Run weighted bipartite matching
 	def run_weighted_matching(self):
@@ -88,12 +88,12 @@ class weightedExperiment():
 		num_match, weight_sum = bipartiteMatching.max_match()
 
 		matching = bipartiteMatching.get_matching_detail()
-		avg_price, avg_rating = self.list_util.avg_price_rating_for_matching(matching)
-		return num_match, avg_price, avg_rating
+		avg_price, avg_rating, avg_distance, utilization = self.list_util.statistic_for_matching(matching)
+		return num_match, avg_price, avg_rating, avg_distance, utilization
 
-def display_result(method, matched, avg_price, avg_rating):
-	print "[{}] Matched: {}  Average price: {}  Average rating: {}".format(
-		method, matched, avg_price, avg_rating)
+def display_result(method, matched, avg_price, avg_rating, avg_distance, utilization):
+	print "[{}] Matched: {}  Average price: {}  Average rating: {} Average distance: {} Utilization:{}".format(
+		method, matched, avg_price, avg_rating, avg_distance, utilization)
 
 def draw_one_figure(fig_id, title, ylabel, legend_pos, col, x, num_request,
 	random_result, fcfs_result, unweighted_result, weighted_result):
@@ -129,10 +129,14 @@ def visualize(num_driver, num_request, random_result, fcfs_result, unweighted_re
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 	draw_one_figure(3, 'Experimental Average Rating Result', 'average rating', 'upper left', 2, x,
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
+	draw_one_figure(4, 'Experimental Average distance Result', 'average distance', 'upper left', 3, x,
+		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
+	draw_one_figure(5, 'Experimental Utilization Result', 'Utilization', 'lower right', 4, x,
+		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 
 def weighted_experiment():
-	driver_sizes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500]
-	request_sizes = [700] * 10
+	driver_sizes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500,2000]
+	request_sizes = [400] * 11
 
 	random_result = []
 	fcfs_result = []
@@ -149,24 +153,24 @@ def weighted_experiment():
 		num_request.append(len(exp.request_list))
 
 		# Run random
-		num_match, avg_price, avg_rating = exp.run_random_matching()
-		display_result("Random", num_match, avg_price, avg_rating)
-		random_result.append((num_match, avg_price, avg_rating))
+		num_match, avg_price, avg_rating, avg_distance, utilization = exp.run_random_matching()
+		display_result("Random", num_match, avg_price, avg_rating, avg_distance, utilization)
+		random_result.append((num_match, avg_price, avg_rating, avg_distance, utilization))
 
 		# Run FCFS
-		num_match, avg_price, avg_rating = exp.run_FCFS_matching()
-		display_result("FCFS", num_match, avg_price, avg_rating)
-		fcfs_result.append((num_match, avg_price, avg_rating))
+		num_match, avg_price, avg_rating, avg_distance, utilization = exp.run_FCFS_matching()
+		display_result("FCFS", num_match, avg_price, avg_rating, avg_distance, utilization)
+		fcfs_result.append((num_match, avg_price, avg_rating, avg_distance, utilization))
 
 		# Run unweighted bipartite matching
-		num_match, avg_price, avg_rating = exp.run_unweighted_matching()
-		display_result("Unweighted bipartite", num_match, avg_price, avg_rating)
-		unweighted_result.append((num_match, avg_price, avg_rating))
+		num_match, avg_price, avg_rating, avg_distance, utilization = exp.run_unweighted_matching()
+		display_result("Unweighted bipartite", num_match, avg_price, avg_rating, avg_distance, utilization)
+		unweighted_result.append((num_match, avg_price, avg_rating, avg_distance, utilization))
 
 		# Run weighted bipartite matching
-		num_match, avg_price, avg_rating = exp.run_weighted_matching()
-		display_result("Weighted bipartite", num_match, avg_price, avg_rating)
-		weighted_result.append((num_match, avg_price, avg_rating))
+		num_match, avg_price, avg_rating, avg_distance, utilization = exp.run_weighted_matching()
+		display_result("Weighted bipartite", num_match, avg_price, avg_rating, avg_distance, utilization)
+		weighted_result.append((num_match, avg_price, avg_rating, avg_distance, utilization))
 
 	visualize(num_driver, num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 

@@ -38,6 +38,7 @@ class DFS_hungary():
     def get_matching(self):
         matching = []
         driver_id_dict = {int(driver[0]): i for i, driver in enumerate(self.ny)}
+        # request, driver
         for idx, request in enumerate(self.nx):
             if self.cx[idx] >= 0:
                 matching.append((idx, driver_id_dict[self.cx[idx]]))

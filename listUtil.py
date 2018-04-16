@@ -13,7 +13,7 @@ class listUtil():
         self.max_price = max([float(driver[2]) for driver in self.driver_list])
         # x-axis is driver capacity, y-axis is request weight
         self.match_matrix = [[4,3,2],[1,4,3],[1,1,4]]
-        self.acceptable_dist = 30
+        self.acceptable_dist = 15
 
     def haversine(self, lon1, lat1, lon2, lat2):
         """
@@ -77,8 +77,8 @@ class listUtil():
         return list, weight
 
     def car_type_match_factor_generator(self,req_weight,capacity):
-        req_type = int(req_weight / 5.0)
-        dri_type = int(capacity / 5.0)
+        req_type = int(req_weight / 10.0)
+        dri_type = int(capacity / 10.0)
         return self.match_matrix[req_type][dri_type]
 
     def calculate_weight(self, price, rating,weight,capacity, dist):
@@ -107,6 +107,7 @@ class listUtil():
                         and dist <= self.acceptable_dist and req_weight <= capacity:
                     visited[driver_id] = True
                     count = count + 1
+                    # request, driver
                     self.fcfs_matching.append((request_id, ind))
                     break
         return count
@@ -138,6 +139,7 @@ class listUtil():
                 random_index = random.randint(0,list_len - 1)
                 visited[temp_list[random_index]] = True
                 count = count + 1
+                # request, driver
                 self.random_matching.append((request_id, temp_ind[random_index]))
         return count
 
@@ -174,14 +176,23 @@ class listUtil():
             list[n] = value
         return list
 
-    def avg_price_rating_for_matching(self, matching):
+    def statistic_for_matching(self, matching):
         sum_rating = 0
         sum_price = 0
+        distance = 0
+        total_capacity = 0
+        total_weight = 0
         for inr, ind in matching:
             _, rating, unit_price, capacity, lat, lon = self.driver_list[ind]
+            unit_budget, req_weight, min_rating, req_lat, req_lon = self.parse_request(self.request_list[inr])
             sum_price += unit_price
             sum_rating += rating
-        return sum_price / len(matching), sum_rating / len(matching)
+            distance += abs(self.haversine(lon,lat,req_lon,req_lat))
+            total_capacity += capacity
+            total_weight += req_weight
+        return sum_price / len(matching), sum_rating / len(matching), \
+               distance / len(matching), total_weight / total_capacity
+
 
     def print_max_min_dist(self):
         print max(self.M),min(self.M)
