@@ -129,13 +129,13 @@ def visualize(num_driver, num_request, random_result, fcfs_result, unweighted_re
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 	draw_one_figure(3, 'Experimental Average Rating Result', 'average rating', 'upper left', 2, x,
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
-	draw_one_figure(4, 'Experimental Average distance Result', 'average distance', 'upper left', 3, x,
+	draw_one_figure(4, 'Experimental Average distance Result', 'average distance', 'lower left', 3, x,
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 	draw_one_figure(5, 'Experimental Utilization Result', 'Utilization', 'lower right', 4, x,
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 
 def weighted_experiment():
-	driver_sizes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500,2000]
+	driver_sizes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000]
 	request_sizes = [400] * 11
 
 	random_result = []

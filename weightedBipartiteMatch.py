@@ -4,8 +4,8 @@ from collections import deque
 M=[]
 class spfa():
 
-    # nx: list of drivers
-    # ny: list of requests
+    # nx: list of requests
+    # ny: list of drivers
     # edge: 01 adjacency matrix to represent edge from driver to request,
     # weight: adjacency matrix to represent weight for each edge
     def __init__(self, nx, ny, edge, weight):
@@ -57,7 +57,7 @@ class spfa():
                 v = Q.popleft()
                 for e in self.edge_list[v]:
                     y = e['v']
-                    if e['rest_flow'] > 0 and distance[y] > distance[v] + e['weight']:
+                    if e['rest_flow'] > 0 and distance[y] > distance[v] + e['weight'] + 1e-10:
                         distance[y] = distance[v] + e['weight']
                         path[y] = e
                         if not in_queue[y]:
