@@ -2,6 +2,7 @@ import dbUtil
 import listUtil
 import hungaryAlgorithm
 import weightedBipartiteMatch
+import matplotlib
 import matplotlib.pyplot as plt
 
 def unweighted_experiment():
@@ -113,12 +114,14 @@ def draw_one_figure(fig_id, title, ylabel, legend_pos, col, x, num_request,
 	plt.ylabel(ylabel)
 	plt.plot(x, y_random, 'yo-', label='random')
 	plt.plot(x, y_fcfs, 'co-', label = 'FCFS')
+
 	if col == 0:
 		plt.plot(x, y_weighted, 'ro-', label='bipartite matching')
 	else:
 		plt.plot(x, y_unweighted, 'bo-', label='unweighted bipartite')
 		plt.plot(x, y_weighted, 'ro-', label='weighted bipartite')
 	plt.legend(loc=legend_pos)
+	plt.savefig(title + '.png', transparent=True)
 	plt.show()
 
 def visualize(num_driver, num_request, random_result, fcfs_result, unweighted_result, weighted_result):
@@ -129,14 +132,14 @@ def visualize(num_driver, num_request, random_result, fcfs_result, unweighted_re
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 	draw_one_figure(3, 'Experimental Average Rating Result', 'average rating', 'upper left', 2, x,
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
-	draw_one_figure(4, 'Experimental Average distance Result', 'average distance', 'upper left', 3, x,
+	draw_one_figure(4, 'Experimental Average distance Result', 'average distance', 'lower left', 3, x,
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 	draw_one_figure(5, 'Experimental Utilization Result', 'Utilization', 'lower right', 4, x,
 		num_request, random_result, fcfs_result, unweighted_result, weighted_result)
 
 def weighted_experiment():
-	driver_sizes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500,2000]
-	request_sizes = [400] * 11
+	driver_sizes = [100, 300, 400, 500, 600, 700, 800, 900, 1000, 1500]
+	request_sizes = [500] * 10
 
 	random_result = []
 	fcfs_result = []

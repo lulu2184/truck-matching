@@ -16,7 +16,7 @@ if __name__ == '__main__':
     match_driver_list = listUtil.gen_driver_id_list(-1)
     match_request_list = listUtil.gen_request_id_list(-1)
     visited = listUtil.gen_driver_id_list(False)
-
+    print listUtil.print_max_min_dist()
     print hungaryAlgorithm.DFS_hungary(request_list,driver_list,edge_list,match_request_list,match_driver_list,visited).max_match()
 
 
