@@ -4,8 +4,8 @@ from collections import deque
 M=[]
 class spfa():
 
-    # nx: list of drivers
-    # ny: list of requests
+    # nx: list of requests
+    # ny: list of drivers
     # edge: 01 adjacency matrix to represent edge from driver to request,
     # weight: adjacency matrix to represent weight for each edge
     def __init__(self, nx, ny, edge, weight):

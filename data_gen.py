@@ -98,7 +98,7 @@ class DataGen:
         db_cursor.execute("CREATE TABLE data (driver_id integer, timestamp integer, lat real, lon real,"
                           + " occupied integer)")
 
-        f = open("20151112.txt", "r")
+        f = open("raw_data/20151112.txt", "r")
         counter = 0
         id = 0
         for line in f:

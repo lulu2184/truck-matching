@@ -12,8 +12,11 @@ class listUtil():
         self.min_price = min([float(driver[2]) for driver in self.driver_list])
         self.max_price = max([float(driver[2]) for driver in self.driver_list])
         # x-axis is driver capacity, y-axis is request weight
-        self.match_matrix = [[8,4,2],[1,8,4],[1,1,8]]
-        self.acceptable_dist = 10
+
+        self.match_matrix = [[0,5,5],[0.8,0,5],[1,0.8,0]]
+        self.acceptable_dist = 100
+        self.min_dist = 0
+        self.max_dist = 72
 
     def haversine(self, lon1, lat1, lon2, lat2):
         """
@@ -84,12 +87,13 @@ class listUtil():
         return self.match_matrix[req_type][dri_type]
 
     def calculate_weight(self, price, rating,weight,capacity, dist):
-        price_range = self.max_price - self.min_price
-        rating_range = self.max_rating - self.min_rating
-        dist_range = max(self.M) - min(self.M)
-        return abs(  (price - self.min_price) / price_range   +
-                1 - (rating - self.min_rating) / rating_range ) + \
-                dist
+
+        return (price - self.min_price) / (self.max_price - self.min_price) * 2 + \
+                1 - (rating - self.min_rating) / (self.max_rating - self.min_rating) + \
+                (dist - self.min_dist) / (self.max_dist - self.min_dist) * 0.3 + \
+                self.car_type_match_factor_generator(weight, capacity)
+               #   \
+               # * (1 / self.car_type_match_factor_generator(weight,capacity)) * dist
 
 
     def firstComeFirstServe(self):
